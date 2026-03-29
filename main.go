@@ -42,7 +42,7 @@ func main()  {
 		fmt.Printf("ID: %d, Nombre: %s, Ciudad ID: %d, Fecha Creacion: %s\n", result.ID, result.nombre, result.ciudad_id, result.fecha_creacion)
 	}
 
-	result1, err2 := getUserByUsernamePrepared("' OR id='3")
+	result1, err2 := getUserByUsernameStmt("' OR id='3")
 	if err2 != nil {
 		fmt.Println("Error:", err2)
 	}
@@ -77,7 +77,7 @@ func getUserByUsername(username string) (*User, error) {
 	}
 	return &user, nil
 }
-func getUserByUsernamePrepared(username string) (*User, error) {
+func getUserByUsernameStmt(username string) (*User, error) {
 	fmt.Println( "-----------------------------------------Query preparada-----------------------------------------" ) 
 	var user User
 	var query = "SELECT id, nombre, ciudad_id, fecha_creacion FROM usuario WHERE nombre = ?"
