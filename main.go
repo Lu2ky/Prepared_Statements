@@ -111,13 +111,26 @@ func login(username string, password string) bool{
 	}
 }
 
-func getUserByUsernameAndCity(username string, cityID int) (*UserUC, error) {
+func getUserByUsernameAndCity(username string, cityID int) ([]*UserUC, error) {
 	fmt.Println("-----------------------------------------getUserByUsernameAndCity-----------------------------------------")
-	var user UserUC
 	var query = "SELECT u.nombre, c.nombre FROM usuario u JOIN ciudad c ON u.ciudad_id = c.id WHERE u.nombre = ? AND c.id = ?"
-	err := db.QueryRow(query, username, cityID).Scan(&user.nombre, &user.ciudad)
+	rows, err := db.Query(query, username, cityID)
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	defer rows.Close()
+	var users []*UserUC
+	for rows.Next() {
+		var user UserUC
+		err := rows.Scan(&user.nombre, &user.ciudad);
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
